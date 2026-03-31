@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Clarity Self-Assessment</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .header {
+            background-color: #1a2744;
+            color: white;
+            padding: 28px 40px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .header p {
+            font-size: 14px;
+            color: #a0aec0;
+        }
+
+        .progress-bar {
+            height: 4px;
+            background-color: #2d4a7a;
+            position: relative;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background-color: #3b82f6;
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            display: flex;
+            gap: 24px;
+            align-items: flex-start;
+        }
+
+        .questions-panel {
+            flex: 1;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 32px 36px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #3b82f6;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #3b82f6;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .section-title .dot {
+            width: 10px;
+            height: 10px;
+            background-color: #3b82f6;
+            border-radius: 50%;
+        }
+
+        .section-divider {
+            margin-top: 40px;
+            margin-bottom: 28px;
+            padding-top: 8px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #3b82f6;
+        }
+
+        .answer-count {
+            font-size: 13px;
+            color: #999;
+        }
+
+        .question-block {
+            margin-bottom: 32px;
+        }
+
+        .question-block:last-child {
+            margin-bottom: 0;
+        }
+
+        .question-text {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1a2744;
+            margin-bottom: 4px;
+        }
+
+        .question-why {
+            font-size: 13px;
+            color: #777;
+            font-style: italic;
+            margin-bottom: 14px;
+        }
+
+        .options-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .option-btn {
+            width: 100px;
+            height: 38px;
+            border-radius: 20px;
+            border: 2px solid #d0d5dd;
+            background: white;
+            color: #555;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .option-btn:hover {
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+
+        /* Colour-coded selected states */
+        .option-btn.selected-yes {
+            background-color: #DAF2D0;
+            border-color: #4FA52D;
+            color: #2d6b15;
+        }
+
+        .option-btn.selected-no {
+            background-color: #FFCCCC;
+            border-color: #B40000;
+            color: #B40000;
+        }
+
+        .option-btn.selected-yesno {
+            background-color: #FFF0C1;
+            border-color: #FFC000;
+            color: #7a5c00;
+        }
+
+        .tap-hint {
+            font-size: 12px;
+            color: #ccc;
+            margin-left: 6px;
+        }
+
+        .followup {
+            margin-top: 16px;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .followup.visible {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .followup-label {
+            font-size: 13px;
+            color: #1a2744;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .textarea-header {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 4px;
+        }
+
+        .word-counter {
+            font-size: 11px;
+            font-weight: 600;
+            color: #999;
+        }
+
+        .word-counter.at-limit {
+            color: #dc2626;
+        }
+
+        .followup textarea {
+            width: 100%;
+            min-height: 80px;
+            border: 2px solid #d0d5dd;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            transition: border-color 0.2s;
+            color: #333;
+            vertical-align: top;
+        }
+
+        .followup textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .followup textarea::placeholder {
+            color: #bbb;
+        }
+
+        .followup textarea.at-limit {
+            border-color: #dc2626;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 300px;
+            position: sticky;
+            top: 30px;
+        }
+
+        .submit-panel {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 28px 24px;
+        }
+
+        .submit-panel h3 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1a2744;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 6px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #d0d5dd;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            color: #333;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .form-group input::placeholder {
+            color: #bbb;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background-color: #1a2744;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 8px;
+        }
+
+        .submit-btn:hover {
+            background-color: #2d4a7a;
+        }
+
+        .submit-btn:disabled {
+            background-color: #999;
+            cursor: not-allowed;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                position: static;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Business Clarity Self-Assessment</h1>
+        <p>We want your feedback to help identify what's working, what's unclear, and where we can improve business performance together</p>
+    </div>
+    <div class="progress-bar">
+        <div class="progress-bar-fill" id="progressBar"></div>
+    </div>
+
+    <div class="container">
+        <div class="questions-panel">
+
+            <!-- SECTION 1: Clarity & Direction -->
+            <div class="section-header">
+                <div class="section-title">
+                    <span class="dot"></span>
+                    CLARITY &amp; DIRECTION
+                </div>
+                <div class="answer-count" id="answerCount">0 of 10 answered</div>
+            </div>
+
+            <!-- Question 1 -->
+            <div class="question-block" data-question="1">
+                <div class="question-text">1. Do you feel clear on what success looks like in your role over the next 90 days?</div>
+                <div class="question-why">This shows whether expectations are clear at an individual level.</div>
+                <div class="options-row">
+                    <button class="option-btn" data-value="yes" onclick="selectOption(1, 'yes', this)">Yes</button>
+                    <button class="option-btn" data-value="no" onclick="selectOption(1, 'no', this)">No</button>
+                    <button class="option-btn" data-value="yesno" onclick="selectOption(1, 'yesno', this)">Yes and No</button>
+                    <span class="tap-hint" id="hint-1">tap to answer</span>
+                </div>
+                <div class="followup" id="followup-1">
+                    <div class="followup-label" id="followup-label-1"></div>
+                    <div class="textarea-header">
+                        <span class="word-counter" id="counter-1">0 / 100 words</span>
+                    </div>
+                    <textarea id="followup-text-1" placeholder="Share your thoughts here..." oninput="updateWordCount(1)"></textarea>
+                </div>
+            </div>
+
+            <!-- Question 2 -->
+            <div class="question-block" data-question="2">
+                <div class="question-text">2. Do you understand how your role contributes to the broader goals of the business?</div>
+                <div class="question-why">This tests whether business goals are being translated into day-to-day work.</div>
+                <div class="options-row">
+                    <button class="option-btn" data-value="yes" onclick="selectOption(2, 'yes', this)">Yes</button>
+                    <button class="option-btn" data-value="no" onclick="selectOption(2, 'no', this)">No</button>
+                    <button class="option-btn" data-value="yesno" onclick="selectOption(2, 'yesno', this)">Yes and No</button>
+                    <span class="tap-hint" id="hint-2">tap to answer</span>
+                </div>
+                <div class="followup" id="followup-2">
+                    <div class="followup-label" id="followup-label-2"></div>
+                    <div class="textarea-header">
+                        <span class="word-counter" id="counter-2">0 / 100 words</span>
+                    </div>
+                    <textarea id="followup-text-2" placeholder="Share your thoughts here..." oninput="updateWordCount(2)"></textarea>
+                </div>
+            </div>
+
+            <!-- Question 3 -->
+            <div class="question-block" data-question="3">
+                <div class="question-text">3. Do the priorities in the business feel clear, consistent, and well communicated?</div>
+                <div class="question-why">This helps uncover confusion and drift.</div>
+                <div class="options-row">
+                    <button class="option-btn" data-value="yes" onclick="selectOption(3, 'yes', this)">Yes</button>
+                    <button class="option-btn" data-value="no" onclick="selectOption(3, 'no', this)">No</button>
+                    <button class="option-btn" data-value="yesno" onclick="selectOption(3, 'yesno', this)">Yes and No</button>
+                    <span class="tap-hint" id="hint-3">tap to answer</span>
+                </div>
+                <div class="followup" id="followup-3">
+                    <div class="followup-label" id="followup-label-3"></div>
+                    <div class="textarea-header">
+                        <span class="word-counter" id="counter-3">0 / 100 words</span>
+                    </div>
+                    <textarea id="followup-text-3" placeholder="Share your thoughts here..." oninput="updateWordCount(3)"></textarea>
+                </div>
+            </div>
+
+            <!-- SECTION 2: Systems & Efficiency -->
+            <div class="section-divider">
+                <div class="section-title">
+                    <span class="dot"></span>
+                    SYSTEMS &amp; EFFICIENCY
+                </div>
+            </div>
+
+            <!-- Question 4 -->
+            <div class="question-block" data-question="4">
+                <div class="question-text">4. Do the processes and systems you use day-to-day work well for you?</div>
+                <div class="question-why">This identifies operational friction.</div>
+                <div class="options-row">
+                    <button class="option-btn" data-value="yes" onclick="selectOption(4, 'yes', this)">Yes</button>
+                    <button class="option-btn" data-value="no" onclick="selectOption(4, 'no', this)">No</button>
+                    <button class="option-btn" data-value="yesno" onclick="selectOption(4, 'yesno', this)">Yes and No</button>
+                    <span class="tap-hint" id="hint-4">tap to answer</span>
+                </div>
+                <div class="followup" id="followup-4">
+                    <div class="followup-label" id="followup-label-4"></div>
+                    <div class="textarea-header">
+                        <span class="word-counter" id="counter-4">0 / 100 words</span>
+                    </div>
+                    <textarea id="followup-text-4" placeholder="Share your thoughts here..." oninput="updateWordCount(4)"></textarea>
+                </div>
+            </div>
+
+            <!-- Question 5 -->
+            <div class="question-block" data-question="5">
+                <div class="question-text">5. Are we working efficiently without unnecessary rework, duplication, or wasted effort?</div>
+                <div class="question-why">This helps expose inefficiencies affecting productivity and profitability.</div>
+                <div class="options-row">
+                    <button class="option-btn" data-value="yes" onclick="selectOption(5, 'yes', this)">Yes</button>
+                    <button class="option-btn" data-value="no" onclick="selectOption(5, 'no', this)">No</button>
+                    <button class="option-btn" data-value="yesno" onclick="selectOption(5, 'yesno', this)">Yes and No</button>
+                    <span class="tap-hint" id="hint-5">tap to answer</span>
+                </div>
+                <div class="followup" id="followup-5">
+                    <div class="followup-label" id="followup-label-5"></div>
+                    <div class="textarea-header">
+                        <span class="word-counter" id="counter-5">0 / 100 words</span>
+                    </div>
+                    <textarea id="followup-text-5" placeholder="Share your thoughts here..." oninput="updateWordCount(5)"></textarea>
+                </div>
+            </div>
+
+            <!-- Question 6 -->
+            <div class="question-block" data-question="6">
+                <div class="question-text">6. Do handovers and communication work well between people, roles, and departments?</div>
+                <div class="question-why">This highlights workflow issues that may be affecting delivery and client experience.</div>
+                <div class="options-row">
+                    <button class="option-btn" data-value="yes" onclick="selectOption(6, 'yes', this)">Yes</button>
+                    <button class="option-btn" data-value="no" onclick="selectOption(6, 'no', this)">No</button>
+                    <button class="option-btn" data-value="yesno" onclick="selectOption(6, 'yesno', this)">Yes and No</button>
+                    <span class="tap-hint" id="hint-6">tap to answer</span>
+                </div>
+                <div class="followup" id="followup-6">
+                    <div class="followup-label" id="followup-label-6"></div>
+                    <div class="textarea-header">
+                        <span class="word-counter" id="counter-6">0 / 100 words</span>
+                    </div>
+                    <textarea id="followup-text-6" placeholder="Share your thoughts here..." oninput="updateWordCount(6)"></textarea>
+                </div>
+            </div>
+
+            <!-- SECTION 3: Culture & Accountability -->
+            <div class="section-divider">
+                <div class="section-title">
+                    <span class="dot"></span>
+                    CULTURE &amp; ACCOUNTABILITY
+                </div>
+            </div>
+
+            <!-- Question 7 -->
+            <div class="question-block" data-question="7">
+                <div class="question-text">7. Are recurring issues being addressed rather than tolerated?</div>
+                <div class="question-why">This often surfaces known problems that have been left too long.</div>
+                <div class="options-row">
+                    <button class="option-btn" data-value="yes" onclick="selectOption(7, 'yes', this)">Yes</button>
+                    <button class="option-btn" data-value="no" onclick="selectOption(7, 'no', this)">No</button>
+                    <button class="option-btn" data-value="yesno" onclick="selectOption(7, 'yesno', this)">Yes and No</button>
+                    <span class="tap-hint" id="hint-7">tap to answer</span>
+                </div>
+                <div class="followup" id="followup-7">
+                    <div class="followup-label" id="followup-label-7"></div>
+                    <div class="textarea-header">
+                        <span class="word-counter" id="counter-7">0 / 100 words</span>
+                    </div>
+                    <textarea id="followup-text-7" placeholder="Share your thoughts here..." oninput="updateWordCount(7)"></textarea>
+                </div>
+            </div>
+
+            <!-- Question 8 -->
+            <div class="question-block" data-question="8">
+                <div class="question-text">8. Is there something leadership could do to help you perform better in your role?</div>
+                <div class="question-why">This gives practical feedback on support, communication, and direction.</div>
+                <div class="options-row">
+                    <button class="option-btn" data-value="yes" onclick="selectOption(8, 'yes', this)">Yes</button>
+                    <button class="option-btn" data-value="no" onclick="selectOption(8, 'no', this)">No</button>
+                    <button class="option-btn" data-value="yesno" onclick="selectOption(8, 'yesno', this)">Yes and No</button>
+                    <span class="tap-hint" id="hint-8">tap to answer</span>
+                </div>
+                <div class="followup" id="followup-8">
+                    <div class="followup-label" id="followup-label-8"></div>
+                    <div class="textarea-header">
+                        <span class="word-counter" id="counter-8">0 / 100 words</span>
+                    </div>
+                    <textarea id="followup-text-8" placeholder="Share your thoughts here..." oninput="updateWordCount(8)"></textarea>
+                </div>
+            </div>
+
+            <!-- SECTION 4: Looking Ahead -->
+            <div class="section-divider">
+                <div class="section-title">
+                    <span class="dot"></span>
+                    LOOKING AHEAD
+                </div>
+            </div>
+
+            <!-- Question 9 -->
+            <div class="question-block" data-question="9">
+                <div class="question-text">9. Is there a change we could make in the next 30 days that would improve the business meaningfully?</div>
+                <div class="question-why">This brings forward practical ideas that can be acted on quickly.</div>
+                <div class="options-row">
+                    <button class="option-btn" data-value="yes" onclick="selectOption(9, 'yes', this)">Yes</button>
+                    <button class="option-btn" data-value="no" onclick="selectOption(9, 'no', this)">No</button>
+                    <button class="option-btn" data-value="yesno" onclick="selectOption(9, 'yesno', this)">Yes and No</button>
+                    <span class="tap-hint" id="hint-9">tap to answer</span>
+                </div>
+                <div class="followup" id="followup-9">
+                    <div class="followup-label" id="followup-label-9"></div>
+                    <div class="textarea-header">
+                        <span class="word-counter" id="counter-9">0 / 100 words</span>
+                    </div>
+                    <textarea id="followup-text-9" placeholder="Share your thoughts here..." oninput="updateWordCount(9)"></textarea>
+                </div>
+            </div>
+
+            <!-- Question 10 -->
+            <div class="question-block" data-question="10">
+                <div class="question-text">10. Do you have a view on what we need to focus on most strongly before 30 June?</div>
+                <div class="question-why">This helps identify where attention is most needed as year-end approaches.</div>
+                <div class="options-row">
+                    <button class="option-btn" data-value="yes" onclick="selectOption(10, 'yes', this)">Yes</button>
+                    <button class="option-btn" data-value="no" onclick="selectOption(10, 'no', this)">No</button>
+                    <button class="option-btn" data-value="yesno" onclick="selectOption(10, 'yesno', this)">Yes and No</button>
+                    <span class="tap-hint" id="hint-10">tap to answer</span>
+                </div>
+                <div class="followup" id="followup-10">
+                    <div class="followup-label" id="followup-label-10"></div>
+                    <div class="textarea-header">
+                        <span class="word-counter" id="counter-10">0 / 100 words</span>
+                    </div>
+                    <textarea id="followup-text-10" placeholder="Share your thoughts here..." oninput="updateWordCount(10)"></textarea>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="submit-panel">
+                <h3>Submit Your Results</h3>
+
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="fullName" placeholder="Your full name">
+                </div>
+
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="email" placeholder="you@example.com">
+                </div>
+
+                <div class="form-group">
+                    <label>Business Name</label>
+                    <input type="text" id="businessName" placeholder="Your business name">
+                </div>
+
+                <div class="form-group">
+                    <label>Advisor Name</label>
+                    <select id="advisorName">
+                        <option value="">-- Select your advisor --</option>
+                        <option>Andrea Szasz</option>
+                        <option>Conor Sarran</option>
+                        <option>Josh Sherrington</option>
+                        <option>Joshua Patten</option>
+                        <option>Nick Mulqueen</option>
+                        <option>Richard Caldecott</option>
+                        <option>Not sure</option>
+                    </select>
+                </div>
+
+                <button class="submit-btn" onclick="submitForm()">Submit and email me a copy</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== CONFIGURATION =====
+        // Paste your Power Automate HTTP trigger URL below
+        const POWER_AUTOMATE_URL = 'https://bb06665214b0e7c9957df91fc7a08e.c0.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/3df8be3e016b42ddb1f13b26a3d2d11e/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=UcqOyak4QIElxniupJ_BSaq7P-NxJ55fWiFlDyTGY-s';
+        // =========================
+
+        const WORD_LIMIT = 100;
+        const answers = {};
+        let answeredCount = 0;
+
+        const followupPrompts = {
+            1: {
+                yes: "Great. Can you give us a brief summary of what clarity looks like for you?",
+                no: "OK. What is unclear or missing?",
+                yesno: "There must be some gaps \u2013 what are they?"
+            },
+            2: {
+                yes: "Great. Can you briefly describe how your role connects to the bigger picture?",
+                no: "OK. What feels disconnected or unclear?",
+                yesno: "There must be some gaps \u2013 what parts are unclear?"
+            },
+            3: {
+                yes: "Great. What helps keep priorities clear for you?",
+                no: "OK. What feels unclear, inconsistent, or keeps changing?",
+                yesno: "What\u2019s clear and what still feels like it shifts?"
+            },
+            4: {
+                yes: "Great. Is there anything that could still be improved?",
+                no: "OK. What causes the most frustration?",
+                yesno: "What works well and what doesn\u2019t?"
+            },
+            5: {
+                yes: "Good. Is there anything that feels close to becoming an issue?",
+                no: "OK. Where are you seeing the rework or duplication?",
+                yesno: "What areas are working well, and where is effort being wasted?"
+            },
+            6: {
+                yes: "Great. Is there anything that could still be tightened up?",
+                no: "OK. Where do the breakdowns happen most?",
+                yesno: "What works well and where do things fall through the cracks?"
+            },
+            7: {
+                yes: "Good to hear. Is there anything starting to become an issue?",
+                no: "OK. What is being tolerated that should be fixed?",
+                yesno: "What\u2019s been addressed, and what\u2019s still being tolerated?"
+            },
+            8: {
+                yes: "What is the one thing leadership could do differently?",
+                no: "That\u2019s great to hear. Anything that could be even better?",
+                yesno: "What\u2019s working and what could improve?"
+            },
+            9: {
+                yes: "What change would make the biggest difference in the next 30 days?",
+                no: "OK. Is there a longer-term change worth flagging?",
+                yesno: "What\u2019s one quick win and one thing that needs more time?"
+            },
+            10: {
+                yes: "What should we focus on most before 30 June?",
+                no: "OK. Is there anything on the horizon you think we should be watching?",
+                yesno: "What\u2019s clear and what still needs to be defined?"
+            }
+        };
+
+        function getWordCount(text) {
+            const trimmed = text.trim();
+            if (trimmed === '') return 0;
+            return trimmed.split(/\s+/).length;
+        }
+
+        function updateWordCount(questionNum) {
+            const textarea = document.getElementById('followup-text-' + questionNum);
+            const counter = document.getElementById('counter-' + questionNum);
+            const words = getWordCount(textarea.value);
+
+            counter.textContent = words + ' / ' + WORD_LIMIT + ' words';
+
+            if (words >= WORD_LIMIT) {
+                counter.classList.add('at-limit');
+                textarea.classList.add('at-limit');
+
+                // Trim to word limit
+                const wordsArray = textarea.value.trim().split(/\s+/);
+                if (wordsArray.length > WORD_LIMIT) {
+                    textarea.value = wordsArray.slice(0, WORD_LIMIT).join(' ');
+                    counter.textContent = WORD_LIMIT + ' / ' + WORD_LIMIT + ' words';
+                }
+            } else {
+                counter.classList.remove('at-limit');
+                textarea.classList.remove('at-limit');
+            }
+        }
+
+        function selectOption(questionNum, value, btn) {
+            const block = btn.closest('.question-block');
+            const buttons = block.querySelectorAll('.option-btn');
+            const wasAnswered = answers[questionNum] !== undefined;
+
+            // Remove all selected states
+            buttons.forEach(b => {
+                b.classList.remove('selected-yes', 'selected-no', 'selected-yesno');
+            });
+
+            // Add colour-coded selected class
+            btn.classList.add('selected-' + value);
+
+            // Track answer
+            answers[questionNum] = value;
+
+            if (!wasAnswered) {
+                answeredCount++;
+            }
+
+            // Update count and progress
+            document.getElementById('answerCount').textContent = answeredCount + ' of 10 answered';
+            document.getElementById('progressBar').style.width = (answeredCount / 10 * 100) + '%';
+
+            // Hide hint
+            document.getElementById('hint-' + questionNum).style.display = 'none';
+
+            // Show follow-up
+            const followup = document.getElementById('followup-' + questionNum);
+            const label = document.getElementById('followup-label-' + questionNum);
+            label.textContent = followupPrompts[questionNum][value];
+            followup.classList.add('visible');
+
+            // Focus textarea
+            document.getElementById('followup-text-' + questionNum).focus();
+        }
+
+        async function submitForm() {
+            const name = document.getElementById('fullName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const business = document.getElementById('businessName').value.trim();
+            const advisor = document.getElementById('advisorName').value;
+
+            if (!name || !email) {
+                alert('Please enter your name and email address.');
+                return;
+            }
+
+            if (answeredCount < 10) {
+                const unanswered = [];
+                for (let i = 1; i <= 10; i++) {
+                    if (!answers[i]) unanswered.push(i);
+                }
+                alert('Please select Yes, No, or Yes and No for all questions.\n\nUnanswered: ' + unanswered.join(', '));
+                return;
+            }
+
+            const firstName = name.split(' ')[0];
+
+            // Build a flat payload suitable for a SharePoint list
+            const payload = {
+                FullName: name,
+                Email: email,
+                BusinessName: business,
+                AdvisorName: advisor,
+                SubmittedAt: new Date().toISOString()
+            };
+
+            // Add each question's answer and detail as flat fields
+            for (let i = 1; i <= 10; i++) {
+                const answer = answers[i];
+                const detail = document.getElementById('followup-text-' + i).value.trim();
+                payload['Q' + i + '_Answer'] = answer === 'yesno' ? 'Yes and No' : answer.charAt(0).toUpperCase() + answer.slice(1);
+                payload['Q' + i + '_Detail'] = detail;
+            }
+
+            // Disable the button and show loading state
+            const submitBtn = document.querySelector('.submit-btn');
+            const originalText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+
+            try {
+                const response = await fetch(POWER_AUTOMATE_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    submitBtn.textContent = 'Submitted!';
+                    submitBtn.style.backgroundColor = '#4FA52D';
+                    alert('Thank you, ' + firstName + '! Your responses have been submitted successfully.');
+                } else {
+                    throw new Error('Server responded with status ' + response.status);
+                }
+            } catch (error) {
+                console.error('Submission error:', error);
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+                alert('There was a problem submitting your responses. Please try again or contact your advisor.');
+            }
+        }
+    </script>
+
+</body>
+</html>
