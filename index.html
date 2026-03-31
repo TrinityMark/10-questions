@@ -201,6 +201,18 @@
             margin-bottom: 8px;
         }
 
+        .followup-label.color-yes {
+            color: #4FA52D;
+        }
+
+        .followup-label.color-no {
+            color: #B40000;
+        }
+
+        .followup-label.color-yesno {
+            color: #FFC000;
+        }
+
         .textarea-header {
             display: flex;
             justify-content: flex-end;
@@ -581,12 +593,12 @@
                 <h3>Submit Your Results</h3>
 
                 <div class="form-group">
-                    <label>Full Name</label>
+                    <label>Full Name <span style="font-weight: 400; color: #999;">(optional)</span></label>
                     <input type="text" id="fullName" placeholder="Your full name">
                 </div>
 
                 <div class="form-group">
-                    <label>Email Address</label>
+                    <label>Email Address <span style="font-weight: 400; color: #999;">(optional)</span></label>
                     <input type="email" id="email" placeholder="you@example.com">
                 </div>
 
@@ -626,52 +638,52 @@
 
         const followupPrompts = {
             1: {
-                yes: "Great. Can you give us a brief summary of what clarity looks like for you?",
+                yes: "Good to hear. Can you give us a brief summary of what clarity looks like for you?",
                 no: "OK. What is unclear or missing?",
                 yesno: "There must be some gaps \u2013 what are they?"
             },
             2: {
-                yes: "Great. Can you briefly describe how your role connects to the bigger picture?",
+                yes: "That\u2019s positive. Can you briefly describe how your role connects to the bigger picture?",
                 no: "OK. What feels disconnected or unclear?",
                 yesno: "There must be some gaps \u2013 what parts are unclear?"
             },
             3: {
-                yes: "Great. What helps keep priorities clear for you?",
+                yes: "Glad to hear it. What helps keep priorities clear for you?",
                 no: "OK. What feels unclear, inconsistent, or keeps changing?",
                 yesno: "What\u2019s clear and what still feels like it shifts?"
             },
             4: {
-                yes: "Great. Is there anything that could still be improved?",
+                yes: "That\u2019s great. Is there anything that could still be improved?",
                 no: "OK. What causes the most frustration?",
                 yesno: "What works well and what doesn\u2019t?"
             },
             5: {
-                yes: "Good. Is there anything that feels close to becoming an issue?",
+                yes: "Good to know. Is there anything that feels close to becoming an issue?",
                 no: "OK. Where are you seeing the rework or duplication?",
-                yesno: "What areas are working well, and where is effort being wasted?"
+                yesno: "What areas are running well, and where is effort being wasted?"
             },
             6: {
-                yes: "Great. Is there anything that could still be tightened up?",
+                yes: "Pleased to hear it. Is there anything that could still be tightened up?",
                 no: "OK. Where do the breakdowns happen most?",
                 yesno: "What works well and where do things fall through the cracks?"
             },
             7: {
-                yes: "Good to hear. Is there anything starting to become an issue?",
+                yes: "That\u2019s encouraging. Is there anything starting to become an issue?",
                 no: "OK. What is being tolerated that should be fixed?",
                 yesno: "What\u2019s been addressed, and what\u2019s still being tolerated?"
             },
             8: {
-                yes: "What is the one thing leadership could do differently?",
-                no: "That\u2019s great to hear. Anything that could be even better?",
+                yes: "Thanks for flagging. What is the one thing leadership could do differently?",
+                no: "Glad things are working. Anything that could be even better?",
                 yesno: "What\u2019s working and what could improve?"
             },
             9: {
-                yes: "What change would make the biggest difference in the next 30 days?",
+                yes: "We\u2019d love to hear it. What change would make the biggest difference?",
                 no: "OK. Is there a longer-term change worth flagging?",
                 yesno: "What\u2019s one quick win and one thing that needs more time?"
             },
             10: {
-                yes: "What should we focus on most before 30 June?",
+                yes: "Useful. What should we focus on most before 30 June?",
                 no: "OK. Is there anything on the horizon you think we should be watching?",
                 yesno: "What\u2019s clear and what still needs to be defined?"
             }
@@ -737,6 +749,8 @@
             const followup = document.getElementById('followup-' + questionNum);
             const label = document.getElementById('followup-label-' + questionNum);
             label.textContent = followupPrompts[questionNum][value];
+            label.classList.remove('color-yes', 'color-no', 'color-yesno');
+            label.classList.add('color-' + value);
             followup.classList.add('visible');
 
             // Focus textarea
@@ -749,11 +763,6 @@
             const business = document.getElementById('businessName').value.trim();
             const advisor = document.getElementById('advisorName').value;
 
-            if (!name || !email) {
-                alert('Please enter your name and email address.');
-                return;
-            }
-
             if (answeredCount < 10) {
                 const unanswered = [];
                 for (let i = 1; i <= 10; i++) {
@@ -763,7 +772,7 @@
                 return;
             }
 
-            const firstName = name.split(' ')[0];
+            const firstName = name ? name.split(' ')[0] : 'there';
 
             // Build a flat payload suitable for a SharePoint list
             const payload = {
