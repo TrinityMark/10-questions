@@ -698,6 +698,23 @@
         const POWER_AUTOMATE_URL = 'https://bb06665214b0e7c9957df91fc7a08e.c0.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/3df8be3e016b42ddb1f13b26a3d2d11e/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=UcqOyak4QIElxniupJ_BSaq7P-NxJ55fWiFlDyTGY-s';
         // =========================
 
+        // Pre-fill fields from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const businessParam = urlParams.get('business');
+        if (businessParam) {
+            document.getElementById('businessName').value = businessParam;
+        }
+        const advisorParam = urlParams.get('advisor');
+        if (advisorParam) {
+            const select = document.getElementById('advisorName');
+            for (let i = 0; i < select.options.length; i++) {
+                if (select.options[i].text === advisorParam) {
+                    select.selectedIndex = i;
+                    break;
+                }
+            }
+        }
+
         const WORD_LIMIT = 100;
         const answers = {};
         let answeredCount = 0;
@@ -838,7 +855,7 @@
                 return;
             }
 
-            const firstName = name ? name.split(' ')[0] : 'there';
+            const firstName = name ? name.split(' ')[0] : '';
 
             // Build a flat payload suitable for a SharePoint list
             const payload = {
@@ -875,7 +892,7 @@
                 if (response.ok) {
                     submitBtn.textContent = 'Submitted!';
                     submitBtn.style.backgroundColor = '#4FA52D';
-                    alert('Thank you, ' + firstName + '! Your responses have been submitted successfully.');
+                    alert('Thank you' + (firstName ? ', ' + firstName : '') + '! Your responses have been submitted successfully.');
                 } else {
                     throw new Error('Server responded with status ' + response.status);
                 }
