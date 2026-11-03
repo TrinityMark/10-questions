@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Business Clarity Self-Assessment</title>
+  <link rel="stylesheet" href="trinity.css">
     <style>
         * {
             margin: 0;
@@ -12,7 +13,7 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            font-family: var(--font);
             background-color: #f0f2f5;
             color: #333;
             line-height: 1.6;
@@ -677,14 +678,10 @@
                     <label>Advisor Name</label>
                     <select id="advisorName">
                         <option value="">-- Select your advisor --</option>
-                        <option>Andrea Szasz</option>
-                        <option>Conor Sarran</option>
-                        <option>Josh Sherrington</option>
-                        <option>Joshua Patten</option>
-                        <option>Nick Mulqueen</option>
-                        <option>Richard Caldecott</option>
                         <option>Not sure</option>
                     </select>
+                    <script src="trinity-advisors.js"></script>
+                    <script>trinityLoadAdvisors('advisorName', { extra: ['Not sure'] });</script>
                 </div>
 
                 <button class="submit-btn" onclick="submitForm()">Submit and email me a copy</button>
@@ -706,13 +703,16 @@
         }
         const advisorParam = urlParams.get('advisor');
         if (advisorParam) {
-            const select = document.getElementById('advisorName');
-            for (let i = 0; i < select.options.length; i++) {
-                if (select.options[i].text === advisorParam) {
-                    select.selectedIndex = i;
-                    break;
+            // The advisor list loads asynchronously; apply the URL prefill once it is in.
+            window.trinityAdvisorsReady.then(() => {
+                const select = document.getElementById('advisorName');
+                for (let i = 0; i < select.options.length; i++) {
+                    if (select.options[i].text === advisorParam) {
+                        select.selectedIndex = i;
+                        break;
+                    }
                 }
-            }
+            });
         }
 
         const WORD_LIMIT = 100;
