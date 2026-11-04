@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Business Clarity Self-Assessment</title>
+  <link rel="stylesheet" href="trinity.css">
     <style>
         * {
             margin: 0;
@@ -12,14 +13,14 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background-color: #f0f2f5;
+            font-family: var(--font);
+            background-color: var(--trinity-grey-light);
             color: #333;
             line-height: 1.6;
         }
 
         .header {
-            background-color: #1a2744;
+            background-color: var(--trinity-blue);
             color: white;
             padding: 28px 40px;
         }
@@ -32,18 +33,18 @@
 
         .header p {
             font-size: 14px;
-            color: #a0aec0;
+            color: var(--trinity-light);
         }
 
         .progress-bar {
             height: 4px;
-            background-color: #2d4a7a;
+            background-color: var(--trinity-light);
             position: relative;
         }
 
         .progress-bar-fill {
             height: 100%;
-            background-color: #3b82f6;
+            background-color: var(--trinity-dark);
             width: 0%;
             transition: width 0.4s ease;
         }
@@ -71,7 +72,7 @@
             align-items: center;
             margin-bottom: 28px;
             padding-bottom: 12px;
-            border-bottom: 2px solid #3b82f6;
+            border-bottom: 2px solid var(--trinity-dark);
         }
 
         .section-title {
@@ -80,7 +81,7 @@
             gap: 10px;
             font-size: 13px;
             font-weight: 700;
-            color: #3b82f6;
+            color: var(--trinity-dark);
             letter-spacing: 1px;
             text-transform: uppercase;
         }
@@ -88,7 +89,7 @@
         .section-title .dot {
             width: 10px;
             height: 10px;
-            background-color: #3b82f6;
+            background-color: var(--trinity-dark);
             border-radius: 50%;
         }
 
@@ -97,7 +98,7 @@
             margin-bottom: 28px;
             padding-top: 8px;
             padding-bottom: 12px;
-            border-bottom: 2px solid #3b82f6;
+            border-bottom: 2px solid var(--trinity-dark);
         }
 
         .answer-count {
@@ -116,7 +117,7 @@
         .question-text {
             font-size: 15px;
             font-weight: 600;
-            color: #1a2744;
+            color: var(--trinity-blue);
             margin-bottom: 4px;
         }
 
@@ -150,8 +151,8 @@
         }
 
         .option-btn:hover {
-            border-color: #3b82f6;
-            color: #3b82f6;
+            border-color: var(--trinity-dark);
+            color: var(--trinity-dark);
         }
 
         /* Colour-coded selected states */
@@ -196,7 +197,7 @@
 
         .followup-label {
             font-size: 13px;
-            color: #1a2744;
+            color: var(--trinity-blue);
             font-weight: 600;
             margin-bottom: 8px;
         }
@@ -245,7 +246,7 @@
 
         .followup textarea:focus {
             outline: none;
-            border-color: #3b82f6;
+            border-color: var(--trinity-dark);
         }
 
         .followup textarea::placeholder {
@@ -273,7 +274,7 @@
         .submit-panel h3 {
             font-size: 14px;
             font-weight: 700;
-            color: #1a2744;
+            color: var(--trinity-blue);
             letter-spacing: 0.5px;
             text-transform: uppercase;
             margin-bottom: 20px;
@@ -306,7 +307,7 @@
         .form-group input:focus,
         .form-group select:focus {
             outline: none;
-            border-color: #3b82f6;
+            border-color: var(--trinity-dark);
         }
 
         .form-group input::placeholder {
@@ -316,7 +317,7 @@
         .submit-btn {
             width: 100%;
             padding: 14px;
-            background-color: #1a2744;
+            background-color: var(--trinity-blue);
             color: white;
             border: none;
             border-radius: 6px;
@@ -328,7 +329,7 @@
         }
 
         .submit-btn:hover {
-            background-color: #2d4a7a;
+            background-color: var(--trinity-dark);
         }
 
         .submit-btn:disabled {
@@ -677,14 +678,10 @@
                     <label>Advisor Name</label>
                     <select id="advisorName">
                         <option value="">-- Select your advisor --</option>
-                        <option>Andrea Szasz</option>
-                        <option>Conor Sarran</option>
-                        <option>Josh Sherrington</option>
-                        <option>Joshua Patten</option>
-                        <option>Nick Mulqueen</option>
-                        <option>Richard Caldecott</option>
                         <option>Not sure</option>
                     </select>
+                    <script src="trinity-advisors.js"></script>
+                    <script>trinityLoadAdvisors('advisorName', { extra: ['Not sure'] });</script>
                 </div>
 
                 <button class="submit-btn" onclick="submitForm()">Submit and email me a copy</button>
@@ -706,13 +703,16 @@
         }
         const advisorParam = urlParams.get('advisor');
         if (advisorParam) {
-            const select = document.getElementById('advisorName');
-            for (let i = 0; i < select.options.length; i++) {
-                if (select.options[i].text === advisorParam) {
-                    select.selectedIndex = i;
-                    break;
+            // The advisor list loads asynchronously; apply the URL prefill once it is in.
+            window.trinityAdvisorsReady.then(() => {
+                const select = document.getElementById('advisorName');
+                for (let i = 0; i < select.options.length; i++) {
+                    if (select.options[i].text === advisorParam) {
+                        select.selectedIndex = i;
+                        break;
+                    }
                 }
-            }
+            });
         }
 
         const WORD_LIMIT = 100;
